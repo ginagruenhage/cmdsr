@@ -1,0 +1,24 @@
+Package: cmdsr
+Type: Package
+Title: continuous Multi-dimensional Scaling
+Version: 1.0
+Date: 2013-11-04
+Authors@R: c(person("Gina", "Gruenhage", role = c("aut", "cre"), email =
+    "gina.gruenhage@bccn-berlin.de"),person("Simon","Barthelme", role= "aut"))
+Maintainer: Gina Gruenhage <gina.gruenhage@bccn-berlin.de>
+Description: More about what it does (maybe more than one line)
+License: GPL( >= 2)
+LazyData: true
+Depends:
+    Rcpp (>= 0.10.5),
+    RcppArmadillo (>= 0.3.920.1),
+    plyr,
+    smacof
+LinkingTo: Rcpp, RcppArmadillo
+Collate:
+    'RcppExports.R'
+    'cmds.R'
+    'cmdsr-package.r'
+    'helper_functions.R'
+    'plot.R'
+    'summary.R'
