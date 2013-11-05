@@ -13,7 +13,7 @@
 #' \item A list of custom weight matrices.
 #' }
 #'
-#' @param D A list of \code{T} distance matrices of the same size, where each list item holds the distance matrix of size \code{NxN} for one timestep, where \code{N} is the size of the underlying dataset. The distance matrices should be positive, symmetric and have zero diagonal.
+#' @param DL A list of \code{T} distance matrices of the same size, where each list item holds the distance matrix of size \code{NxN} for one timestep, where \code{N} is the size of the underlying dataset. The distance matrices should be positive, symmetric and have zero diagonal.
 #' @param k An integer defining the embedding dimension. Defaults to one.
 #' @param l The regularization parameter. Should be a positive real number.
 #' @param W An optional list of weight matrices. Should be of the same size as \code{D}. It can be used to implement variants of MDS.
@@ -21,6 +21,7 @@
 #' @param per periodic. If set to TRUE the penalty will be adjusted to enforce periodic embeddings.
 #' @param M An optional custom penalty matrix of size \code{TxT}.
 #' @param init The intialization method. Defaults to \code{average}, meaning that the algorithm is initialized with constant curves based on the average distance matrix. An alternative method is \code{random}.
+#' @param eps The accepted deviation from the previous iteration for convergence checking.
 #' @export
 #' @return res A list with the following elements:
 #'   \item{XL}{A list of Nxk matrices, whose rows contain the coordinates of the points for a given timestep.}

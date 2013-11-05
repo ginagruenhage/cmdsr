@@ -1,3 +1,16 @@
+eye <- function(n,sparse=F)
+  {
+    if (sparse)
+      {
+        sparseMatrix(i=1:n,j=1:n,x=rep(1,n))
+      }
+    else
+      {
+        diag(rep(1,n))
+      }
+  }
+
+a.n <- as.numeric
 
 is.square <- function(m) dim(m)[1] == dim(m)[2]
 

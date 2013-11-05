@@ -6,10 +6,10 @@
     per = FALSE, M = "NULL", init = "average", eps = 0.01)
 }
 \arguments{
-  \item{D}{A list of \code{T} distance matrices of the same
-  size, where each list item holds the distance matrix of
-  size \code{NxN} for one timestep, where \code{N} is the
-  size of the underlying dataset. The distance matrices
+  \item{DL}{A list of \code{T} distance matrices of the
+  same size, where each list item holds the distance matrix
+  of size \code{NxN} for one timestep, where \code{N} is
+  the size of the underlying dataset. The distance matrices
   should be positive, symmetric and have zero diagonal.}
 
   \item{k}{An integer defining the embedding dimension.
@@ -35,6 +35,9 @@
   \code{average}, meaning that the algorithm is initialized
   with constant curves based on the average distance
   matrix. An alternative method is \code{random}.}
+
+  \item{eps}{The accepted deviation from the previous
+  iteration for convergence checking.}
 }
 \value{
   res A list with the following elements: \item{XL}{A list

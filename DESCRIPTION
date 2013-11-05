@@ -13,12 +13,13 @@ Depends:
     Rcpp (>= 0.10.5),
     RcppArmadillo (>= 0.3.920.1),
     plyr,
-    smacof
+    smacof,
+    animation
 LinkingTo: Rcpp, RcppArmadillo
 Collate:
     'RcppExports.R'
     'cmds.R'
-    'cmdsr-package.r'
     'helper_functions.R'
     'plot.R'
     'summary.R'
+    'cmdsr.r'

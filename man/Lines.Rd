@@ -1,0 +1,11 @@
+\docType{data}
+\name{Lines}
+\alias{Lines}
+\title{Lines}
+\format{A list of ten 50x50 matrices.}
+\description{
+  A list of distance matrices representing fifty lines with
+  linearly increasing slopes.
+}
+\keyword{datasets}
+

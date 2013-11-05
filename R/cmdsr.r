@@ -18,3 +18,53 @@
 #' @name cmdsr
 #' @docType package
 NULL
+
+#' Constant Triangle
+#' 
+#' A list of distance matrices representing a constant equilateral triangle at five timesteps.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A list of five 3x3 matrices.
+#' @name ConstantTriangle
+NULL
+
+#' Expanding Circle
+#' 
+#' A list of distance matrices representing ten points arranged on a circle with equal spacing. The circle has linearly increasing radius. There is a bit gaussian noise on the position of the points. 
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A list of ten 10x10 matrices.
+#' @name ExpandingCircle
+NULL
+
+#' Expanding Triangle
+#' 
+#' A list of distance matrices representing three points on the corner of an equilateral triangle. The side lenghts of the triangle are linearly increasing.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A list of five 3x3 matrices.
+#' @name ExpandingTriangle
+NULL
+
+#' Lines
+#' 
+#' A list of distance matrices representing fifty lines with linearly increasing slopes.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A list of ten 50x50 matrices.
+#' @name Lines
+NULL
+
+#' QuadCurves
+#' 
+#' A list of distance matrices representing five quadratic curves with linearly increasing slopes.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A list of eleven 5x5 matrices.
+#' @name QuadCurves
+NULL
