@@ -9,7 +9,7 @@
 #' \code{cmds} provides several MDS variants via the parameter \code{W}. \code{W} can be set to
 #' \itemize{
 #' \item \code{NULL} The algorithm uses an unweighted MDS cost function.
-#' \item \code{Kamada-Kawai} The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}.
+#' \item \code{kamada-kawai} The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}.
 #' \item A list of custom weight matrices.
 #' }
 #'
@@ -65,7 +65,9 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   ## weight checking
   if (class(W) == "character") {
     if (W == "NULL") {
-      WL <- replicate(T,list(matrix(1,N,N)))
+      WL <- llply(replicate(T,list(matrix(1,N,N))), function(W){
+        diag(W) <- 0;
+        sweep(W,1,rowSums(W),FUN="/")})
     }
     else if (W == "kamada-kawai") {
       WL <- llply(DL,function(d) { 
@@ -121,15 +123,8 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   
   ## set params
   max.iter = 50 ## number of outer loop iterations, multiple of 5
-  
-  if (class(W) == "character") {
-    if (W == "NULL") {
-      params <- list(N = N, D = k , T = T, l = l, weighted = FALSE, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M)
-    }
-  }
-  else{
-    params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M)
-  }      
+  browser()
+  params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M)
   
   ## function to compute embedding
   do.cmds <- function(DL, XL, params, max.iter){
