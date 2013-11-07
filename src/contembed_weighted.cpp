@@ -1,8 +1,7 @@
+// C++ implementation of cMDS optimisation
+// Gina Gruenhage, Simon Barthelme 
 
-//#include <Rcpp.h>
 #include <RcppArmadillo.h>
-// [[Rcpp::depends(RcppArmadillo)]]
-
 using namespace Rcpp;
 
 
@@ -36,14 +35,12 @@ NumericVector ProjectVec(NumericVector xi,NumericVector xj,double dij)
 {
   NumericVector delta = xi-xj;
   double vnorm = sqrt(sum(pow(delta,2)));
-  //  printvec(xi);printvec(xj);std::cout << "\n";
   if (vnorm == 0)
     {
       ProjectVec(rnorm(xi.size()),xj,dij);
     }
   else
     {
-      //      std::cout << vnorm << "\n";
       return xj + delta * dij / vnorm;
     }
 }
@@ -57,7 +54,6 @@ NumericMatrix ProjectC(NumericMatrix Dtau,NumericMatrix Xtau, int i)
   NumericMatrix out(d,n);
   for (int j = 0; j < n; j++)
     {
-      //std::cout << "j: " << j  << "n: " << n << "\n";
       if (j != (i))
 	{
 	  out(_,j) = ProjectVec(x,Xtau(_,j),Dtau(i,j));
@@ -136,9 +132,7 @@ NumericMatrix MinimiseWeighted(List XauxList, List WList, int i, List params)
       NumericMatrix W=WList[ind_t];
       for (ind_row = 0;ind_row < d; ind_row++)
 	{
-	  //	  
 	  m[ind_row] = sum(Xa(ind_row,_)*W(i,_));
-	  //	  std::cout<< "ind_row " << ind_row << " m[ind_row] " << m[ind_row] << "\n";
 	}
       MeanAux.col(ind_t) = as<arma::colvec>(m);
     }

@@ -173,14 +173,14 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       ## store a hard copy of the initial configuration
       XL.init <- llply(XL,function(X) X+0)
 
-      plot.cmds(list(DL = DL,XL = XL, params = params))
+ #     plot.cmds(list(DL = DL,XL = XL, params = params))
     }
   } else {
     XL <- init
     ## store a hard copy of the initial configuration
     XL.init <- llply(XL,function(X) X+0)
     
-    plot.cmds(list(DL = DL,XL = XL, params = params))
+#    plot.cmds(list(DL = DL,XL = XL, params = params))
   }
 
   ## compute embedding
@@ -190,7 +190,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       for (t in seq(1,40)){
         XL <- alply(seq_len(T), 1, function(i) x <- matrix(rnorm(N*k,0,max(DL[[i]])),k,N))
         XL.init <- llply(XL,function(X) X+0)
-        plot.cmds(list(DL = DL,XL = XL, params = params))
+#        plot.cmds(list(DL = DL,XL = XL, params = params))
         RL[[t]] <- do.cmds(DL, XL.init, params, max.iter)
       }
       res <- RL[[which.min(laply(RL,function(res) res$con$trace[16,2]))]]
@@ -204,7 +204,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     res$XL.init <- XL.init
   }
   
-  plot.cmds(res)  
+  #plot.cmds(res)  
 
   ## convergence checking
   delta <- (res$e - res$e0)

@@ -1,5 +1,5 @@
 export(cmds)
+export(googleVis.cmds)
 export(plot.cmds)
 export(summary.cmds)
 useDynLib(cmdsr)
-exportPattern("^[[:alpha:]]+")
