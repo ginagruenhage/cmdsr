@@ -64,7 +64,7 @@
   can be used. \code{cmds} provides several MDS variants
   via the parameter \code{W}. \code{W} can be set to
   \itemize{ \item \code{NULL} The algorithm uses an
-  unweighted MDS cost function. \item \code{Kamada-Kawai}
+  unweighted MDS cost function. \item \code{kamada-kawai}
   The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}. \item
   A list of custom weight matrices. }
 }

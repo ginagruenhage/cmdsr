@@ -67,13 +67,15 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     if (W == "NULL") {
       WL <- llply(replicate(T,list(matrix(1,N,N))), function(W){
         diag(W) <- 0;
-        sweep(W,1,rowSums(W),FUN="/")})
+        W
+      })
     }
     else if (W == "kamada-kawai") {
       WL <- llply(DL,function(d) { 
-      W <- 1/(d*d);
-      diag(W) <- 0;
-      sweep(W,1,rowSums(W),FUN="/")})
+        W <- 1/(d*d);
+        diag(W) <- 0;
+        W
+      })
     }
   } else {
     if (class(W) == "list" & length(W) == T) {
@@ -84,7 +86,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     }
   }
   
-  ## check D for NA's and change the weights accordingly
+  ## check D for NA's and set the corresponding weights to zero
   WL <- alply(seq_len(T), 1, function(i) {
     if (any(is.na(DL[[i]]))) {
       warning("There are some missing values in 'D'.")
@@ -92,6 +94,10 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     }
     WL[[i]]
   })
+
+  ## row-normalize weight matrices
+  WL <- llply(WL,function(W){
+    sweep(W,1,rowSums(W),FUN="/")})
 
   ## check k
   k <- as.integer(k)
@@ -123,7 +129,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   
   ## set params
   max.iter = 50 ## number of outer loop iterations, multiple of 5
-  browser()
+  
   params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M)
   
   ## function to compute embedding
@@ -169,7 +175,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       ## store a hard copy of the initial configuration
       XL.init <- llply(XL,function(X) X+0)
 
-      plot.cmds(list(DL = DL,XL = XL, params = params))
+      #plot.cmds(list(DL = DL,XL = XL, params = params))
     }
   } else {
     XL <- init
@@ -200,7 +206,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     res$XL.init <- XL.init
   }
   
-  plot.cmds(res)  
+  #plot.cmds(res)  
 
   ## convergence checking
   delta <- (res$e - res$e0)
