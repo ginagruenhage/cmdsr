@@ -10,4 +10,4 @@ The essential function of the package is `cmds()`. It takes a list of distance m
 
 The output list can then be summarized using the `summary.cmds()` function and plotted using either `plot.cmds()` for a simple plot of the embedding or `googleVis.cmds()` for an interactive visualization using googleVis charts. 
 
-
+We recommend taking a look at the *personality* vignette to get started with the package.
