@@ -22,14 +22,18 @@ plot.cmds <- function(res, embedding = TRUE,  animation = FALSE, delay = .1, con
   DL.X <- Dist.List(XL,params)
   D <- params$D
   T <- params$T
-
+  
   if (embedding){
     if (D == 1) {
       par(mfrow=c(1,1))
       lim <- max(laply(DL,max))
       plot(1:T, 1:T, type="n", ylim = c(-lim, lim), xlab="alpha", ylab="Dimension 1")
+      if (T > 1){
+        apply(sapply(center.conf(XL),function(v) v[1,]),1,function(v) lines(v))
+      } else {
+        points(rep(1,params$N),center.conf(XL)[[1]])
+      }
       
-      apply(sapply(center.conf(XL),function(v) v[1,]),1,function(v) lines(v))
     } else {
       if (animation == FALSE){
         par(mfrow = c(ceiling(T/3),3))

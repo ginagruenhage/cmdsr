@@ -48,8 +48,6 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   N <- dim(DL[[1]])[1]
   T <- length(DL)
 
-  if (T < 3) stop("The length of DL should be larger or equal to 3.")
-
   llply(DL, function(d) {
     tmp <- aaply(d, 1, function(v) (all(v == 0) | sum(is.na(v))==(N-1) ) )
     tmp[is.na(tmp)] <- FALSE
@@ -107,6 +105,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   if (l < 0) stop("l must be positive.")
 
   ## check M
+  if (T >=3 ){
   if (class(M) == "character") {
     if (M == "NULL") {
       M <- Penalty.M(T, periodic = per)
@@ -114,7 +113,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   } else {
     if (all(dim(as.matrix(M)) != c(T,T))) stop("The custom penalty matrix must be of size TxT.")
   }
-  
+} else { M = 1 }
   ## check init
   if (class(init) == "list") {
     tmp <- aaply(seq_len(T), 1, function(i) dim(init[[i]]) == c(N,k))
@@ -168,8 +167,8 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       w <- matrix(1,N,N)
       w[is.na(MeanD)] <- 0
       MeanD[is.na(MeanD)] <- 0
-      X <- smacofSym(MeanD,ndim=k)$conf      
-      X <- raply(T,X)
+      X <- as.matrix(smacofSym(MeanD,ndim=k)$conf,N,k)
+      X <- raply(T,X,.drop=FALSE)
       XL <- alply(X,1,function(x) t(x))
       attributes(XL) <- NULL
       ## store a hard copy of the initial configuration
@@ -184,7 +183,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     
     plot.cmds(list(DL = DL,XL = XL, params = params))
   }
-
+  
   ## compute embedding
   if (class(init) == "character"){
     if (init == "random"){

@@ -53,9 +53,14 @@ penalty.per.curve.list <- function(DL,XL,params)
 C.L <- function(DL , XL , params)
   {
     Dist <- laply(DL, function(D) D)
+    Dist <- array(Dist,c(params$T,params$N,params$N))
     X <- laply(XL, function(X) X, .drop = FALSE)
-    
-    L(Dist , X , params) +  params$l * O(Dist , X , params)
+
+    if (params$T >= 3){
+      L(Dist , X , params) +  params$l * O(Dist , X , params)
+    } else {
+      L(Dist, X , params)
+    }      
   }
 
 L.L <- function(DL, XL, params)
@@ -64,6 +69,7 @@ L.L <- function(DL, XL, params)
     T <- params$T
 
     Dist <- laply(DL, function(D) D)
+    Dist <- array(Dist,c(T,N,N))
     X <- laply(XL, function(X) X, .drop = FALSE)
     
     D.X <- Dist.matrix(X, params) # TxNxN
@@ -159,7 +165,7 @@ Dist.matrix <- function(X,params)
     D <- params$D
     N <- params$N
     stopifnot( dim(X) == c(T , D , N) )
-    aaply(X,1,function(Xt) as.matrix(dist(t(matrix(Xt,D,N)))))
+    array(aaply(X,1,function(Xt) as.matrix(dist(t(matrix(Xt,D,N))))),c(T,N,N))
   }
 
 transform.res <- function(res){
