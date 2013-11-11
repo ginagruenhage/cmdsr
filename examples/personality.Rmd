@@ -108,3 +108,31 @@ df <- data.frame(id=names(questions),question=do.call("c",questions))
 print(googleVis.cmds(res,df),"chart")
 ```
 Due to a limitation in GoogleVis, the ages appear as years: 1920 actually means people around 20. 
+
+
+Interactive graphs can also be produced using other libraries. Here's one using the [https://github.com/tdhock/animint|animint](animint) package:
+```{r animint,results="asis"}
+library(animint)
+library(stringr)
+df$group <- str_sub(df$id,1,1) #Questions are grouped thematically, we'll plot themes using different colours
+
+#Turn cMDS output into a data.frame
+embed <- ldply(1:length(ages),function(ind)
+               {
+                   df <- as.data.frame(t(res$XL[[ind]]))
+                   names(df) <- c("cmds.x1","cmds.x2")
+                   df[,"age"] <- ages[ind]
+                   df[,"id"] <- names(questions)
+                   df
+               })
+
+embed <- merge(embed,df) #Add info on the questions
+#animint is based on ggplot. see animint documentation for info
+pa <- ggplot(df,aes(rep(0,25),25:1,col=group))+geom_text(aes(label=question,clickSelects=id)) +
+    theme(axis.line=element_blank(),
+          axis.text=element_blank(),
+          axis.ticks=element_blank(),
+          axis.title=element_blank(),legend.position="none")
+pb <- ggplot(embed)+make_text(embed,0,2,label="age",format="Age %d +/- 2 years")+geom_text(aes(cmds.x1,cmds.x2,label=id,showSelected=id,showSelected2=age),size=2)+geom_text(aes(cmds.x1,cmds.x2,label=id,showSelected=age,col=group),alpha=.8)
+gg2animint_knitr(list(pa=pa,pb=pb,time=list(variable="age", ms=500)))
+```
