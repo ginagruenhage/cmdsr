@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="cmdsr : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>cmdsr</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ginagruenhage/cmdsr">View on GitHub</a>
+
+          <h1 id="project_title">cmdsr</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ginagruenhage/cmdsr/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ginagruenhage/cmdsr/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="cmdsr" class="anchor" href="#cmdsr"><span class="octicon octicon-link"></span></a>cmdsr</h1>
+
+<p><code>cmdsr</code> provides tools to compute and analyze continuous embeddings that are computed using cMDS. Continuous embeddings are a useful way to visualize data that has inherent continuous parameters, such as time or experimental control variables. It is also particularly useful to visualize the effects of changing distance functions. An example could be a family of distance functions that is parameterized by a hyperparameter, such as scale. Applying different distance functions from this family to a dataset might lead to significantly different output. Various effects of such changing distances on data can be visualized using cMDS. 
+You can track the development of <code>cmdsr</code> at <a href="https://github.com/ginagruenhage/cmdsr">https://github.com/ginagruenhage/cmdsr</a>. <code>cmdsr</code> is easy to install using the <code>devtools</code> package:
+<code>devtools::install_github("cmdsr","ginagruenhage")</code></p>
+
+<h2>
+<a name="components-of-cmdsr" class="anchor" href="#components-of-cmdsr"><span class="octicon octicon-link"></span></a>Components of cmdsr</h2>
+
+<p>The essential function of the package is <code>cmds()</code>. It takes a list of distance matrices and gives a list output. The essential component of this output is the list of configuration matrices that contains the coordinates of embedding points. </p>
+
+<p>The output list can then be summarized using the <code>summary.cmds()</code> function and plotted using either <code>plot.cmds()</code> for a simple plot of the embedding or <code>googleVis.cmds()</code> for an interactive visualization using googleVis charts. </p>
+
+<p>We recommend taking a look at the <em>personality</em> vignette to get started with the package.</p>
+
+<h2>
+<a name="citation-info" class="anchor" href="#citation-info"><span class="octicon octicon-link"></span></a>Citation info</h2>
+
+<p>The cMDS algorithm is described in: 
+Gina Gruenhage &amp; Simon Barthelme,  Visualizing the effects of a changing distance using continuous embeddings, <a href="http://arxiv.org/abs/1311.1911">arxiv.org/abs/1311.1911</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">cmdsr maintained by <a href="https://github.com/ginagruenhage">ginagruenhage</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
