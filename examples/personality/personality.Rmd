@@ -1,6 +1,13 @@
 # Personality over time: an example with cMDS
 
+This vignette describes how to use cMDS to produce interactive plots. 
+
+
+<h2> The BFI dataset </h2>
+
 In this example we'll use data from a personality study, "bfi" from package *psych*. People answered questions such as "I am full of ideas" with a rating of how well that describes their personality (from 1 to 6). 
+
+
 We load the package:
 ```{r install_psych}
 if (suppressWarnings(require(psych))==FALSE)
@@ -9,37 +16,17 @@ if (suppressWarnings(require(psych))==FALSE)
     }
 library(psych)
 data(bfi)
-head(bfi)
 ```
+
+
 The questions asked are coded in the data.frame as "A1","A2", etc. The help file for the dataset gives us the corresponding questions, which we encode as a list :
 ```{r questions}
-questions = list(
-     "A1"="Am indifferent to the feelings of others.", 
-     "A2"="Inquire about others' well-being.", 
-     "A3"="Know how to comfort others.", 
-     "A4"="Love children.", 
-     "A5"="Make people feel at ease.", 
-     "C1"="Am exacting in my work.", 
-     "C2"="Continue until everything is perfect.", 
-     "C3"="Do things according to a plan.", 
-     "C4"="Do things in a half-way manner.", 
-     "C5"="Waste my time.", 
-     "E1"="Won't talk a lot.", 
-     "E2"="Find it difficult to approach others.", 
-     "E3"="Know how to captivate people.", 
-     "E4"="Make friends easily.", 
-     "E5"="Take charge.", 
-     "N1"="Get angry easily.", 
-     "N2"="Get irritated easily.", 
-     "N3"="Have frequent mood swings.", 
-     "N4"="Often feel blue.", 
-     "N5"="Panic easily.", 
-     "O1"="Am full of ideas.", 
-     "O2"="Avoid difficult reading material.",
-     "O3"="Carry the conversation to a higher level.", 
-     "O4"="Spend time reflecting on things.", 
-     "O5"="Will not probe deeply into a subject.") 
+source('personality_questions.R')
+questions[["A1"]]
 ```
+
+<h2> Questions as vectors </h2>
+
 
 The data include the answers of around 3,000 participants. Participants' responses to a certain question can be grouped into a (long) response vector.
 If two questions measure a similar aspect of personality, then the responses will tend to correlate: presumably, if you're cocky enough to declare that you "know how to captivate people", you'll probably also declare that you are "make friends easily". To start with, we'll measure the similarity of two response vectors using simple Euclidean distance. 
@@ -56,24 +43,33 @@ D <- as.matrix(dist(X))
 image(t(D))
 ```
 
+
+
+<h2> Clustering </h2>
+
+	
 We can cluster the response vectors:
 ```{r hclust}
 plot(hclust(dist(X)))
 ```
 the highest-level cluster is pretty straightforward to interpret:
 ```{r hclust_1}
-questions[which(cutree(hclust(dist(X)),2)==1)]
+head(questions[which(cutree(hclust(dist(X)),2)==1)],3)
 ```
 vs:
 ```{r hclust_2}
-questions[which(cutree(hclust(dist(X)),2)==2)]
+head(questions[which(cutree(hclust(dist(X)),2)==2)],3)
 ```
 This seems to suggest there are questions that people prefer to answer positively and others not. 
+
+<h2> The age covariate </h2>
 
 The bfi dataset also comes with a column vector that gives us the age of the participants. 
 ```{r hist_age}
 hist(bfi$age)
 ```
+
+<h2> Using cMDS to look at the effects of age </h2>
 
 We'll use cMDS to see if the relationship between questions changes over time. 
 
@@ -101,6 +97,27 @@ library(cmdsr)
 res <- cmds(DL,k=2,l=1)
 ```
 
+<h2> The structure of cMDS output </h2> 
+
+The most important bit in the output returned by cMDS is XL, a list of configurations with the same length as DL, the list of distances. Each XL is a k*n matrix, where k is the embedding dimension (here, k=2) and n is the number of points. 
+
+```{r plot_conf}
+plot(res$XL[[1]][1,],res$XL[[1]][2,],xlab="Dimension 1",ylab="Dimension 2",
+     pch=19,main="cMDS configuration at the initial timestep")
+```
+
+Each point represents a question, located so that its distance to the other points reflects the initial distance matrix. We have what looks like clustering, and sure enough if we label the points according to the roughest hierarchical clustering division we have:
+```{r}
+cols <- c('red','blue')[cutree(hclust(dist(X)),2)]
+plot(res$XL[[1]][1,],res$XL[[1]][2,],xlab="Dimension 1",ylab="Dimension 2",
+     pch=19,main="cMDS configuration at the initial timestep",col=cols)
+
+```
+
+
+<h2> A motion chart using RGoogleVis </h2>
+
+
 The embedding can be displayed using the motion widget in the GoogleVis package:
 ```{r,results="asis"}
 #Create a data.frame with some basic information on what's being displayed
@@ -108,3 +125,33 @@ df <- data.frame(id=names(questions),question=do.call("c",questions))
 print(googleVis.cmds(res,df),"chart")
 ```
 Due to a limitation in GoogleVis, the ages appear as years: 1920 actually means people around 20. 
+
+<h2> A motion chart using animint (work in progress) </h2>
+
+Interactive graphs can also be produced using other libraries. Here's an example using the [https://github.com/tdhock/animint|animint](animint) package:
+```{r animint,results="asis",warning=FALSE}
+library(animint)
+library(stringr)
+df$group <- str_sub(df$id,1,1) #Questions are grouped thematically, we'll plot themes using different colours
+
+#Turn cMDS output into a data.frame
+embed <- ldply(1:length(ages),function(ind)
+               {
+                   df <- as.data.frame(t(res$XL[[ind]]))
+                   names(df) <- c("cmds.x1","cmds.x2")
+                   df[,"age"] <- ages[ind]
+                   df[,"id"] <- names(questions)
+                   df
+               })
+
+embed <- merge(embed,df) #Add info on the questions
+#animint is based on ggplot. see animint documentation for info
+pa <- ggplot(df,aes(rep(0,25),25:1,col=group))+geom_text(aes(label=question,clickSelects=id)) +
+    theme(axis.line=element_blank(),
+          axis.text=element_blank(),
+          axis.ticks=element_blank(),
+          axis.title=element_blank(),legend.position="none")
+pb <- ggplot(embed)+make_text(embed,0,2,label="age",format="Age %d +/- 2 years")+geom_text(aes(cmds.x1,cmds.x2,label=id,showSelected=id,showSelected2=age),size=2)+geom_text(aes(cmds.x1,cmds.x2,label=id,showSelected=age,col=group),alpha=.8)
+gg2animint_knitr(list(pa=pa,pb=pb,time=list(variable="age", ms=500)))
+```
+

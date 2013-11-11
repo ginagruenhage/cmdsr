@@ -1,0 +1,26 @@
+colour,x,y,label,clickSelects,PANEL,group
+#F8766D,0.5,0.954545454545455,Am indifferent to the feelings of others.,A1,1,1
+#F8766D,0.5,0.916666666666667,Inquire about others' well-being.,A2,1,2
+#F8766D,0.5,0.878787878787879,Know how to comfort others.,A3,1,3
+#F8766D,0.5,0.840909090909091,Love children.,A4,1,4
+#F8766D,0.5,0.803030303030303,Make people feel at ease.,A5,1,5
+#A3A500,0.5,0.765151515151515,Am exacting in my work.,C1,1,6
+#A3A500,0.5,0.727272727272727,Continue until everything is perfect.,C2,1,7
+#A3A500,0.5,0.689393939393939,Do things according to a plan.,C3,1,8
+#A3A500,0.5,0.651515151515151,Do things in a half-way manner.,C4,1,9
+#A3A500,0.5,0.613636363636364,Waste my time.,C5,1,10
+#00BF7D,0.5,0.575757575757576,Won't talk a lot.,E1,1,11
+#00BF7D,0.5,0.537878787878788,Find it difficult to approach others.,E2,1,12
+#00BF7D,0.5,0.5,Know how to captivate people.,E3,1,13
+#00BF7D,0.5,0.462121212121212,Make friends easily.,E4,1,14
+#00BF7D,0.5,0.424242424242424,Take charge.,E5,1,15
+#00B0F6,0.5,0.386363636363636,Get angry easily.,N1,1,16
+#00B0F6,0.5,0.348484848484848,Get irritated easily.,N2,1,17
+#00B0F6,0.5,0.310606060606061,Have frequent mood swings.,N3,1,18
+#00B0F6,0.5,0.272727272727273,Often feel blue.,N4,1,19
+#00B0F6,0.5,0.234848484848485,Panic easily.,N5,1,20
+#E76BF3,0.5,0.196969696969697,Am full of ideas.,O1,1,21
+#E76BF3,0.5,0.159090909090909,Avoid difficult reading material.,O2,1,22
+#E76BF3,0.5,0.121212121212121,Carry the conversation to a higher level.,O3,1,23
+#E76BF3,0.5,0.0833333333333333,Spend time reflecting on things.,O4,1,24
+#E76BF3,0.5,0.0454545454545455,Will not probe deeply into a subject.,O5,1,25

@@ -14,7 +14,8 @@ Depends:
     RcppArmadillo (>= 0.3.920.1),
     plyr,
     smacof,
-    animation
+    animation,
+    googleVis
 LinkingTo: Rcpp, RcppArmadillo
 Collate:
     'RcppExports.R'
