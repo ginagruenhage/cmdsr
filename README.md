@@ -15,4 +15,4 @@ We recommend taking a look at the *personality* vignette to get started with the
 ## Citation info
 
 The cMDS algorithm is described in: 
-Gina Gruenhage & Simon Barthelme,  Visualizing the effects of a changing distance using continuous embeddings, [http://arxiv.org/abs/1311.1911](arxiv.org/abs/1311.1911).
+Gina Gruenhage & Simon Barthelme,  Visualizing the effects of a changing distance using continuous embeddings, [arxiv.org/abs/1311.1911](http://arxiv.org/abs/1311.1911).
