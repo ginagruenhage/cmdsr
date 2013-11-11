@@ -29,10 +29,13 @@
 #'   \item{XL.init}{The initial configuration for the algorithm.}
 #'   \item{params}{A list of parameters used by the algorithm.}
 #'   \item{con}{A list of convergence characteristics}
+#' @references
+#' Gina Gruenhage & Simon Barthelme,  Visualizing the effects of a changing distance using continuous embeddings, http://arxiv.org/abs/1311.1911
 #' @examples 
 #' res <- cmds(QuadCurves)
 #' res <- cmds(ExpandingTriangle, k = 2, v = TRUE)
 #' res <- cmds(QuadCurves, l = 10)
+
 
 cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL", init = "average", eps = 1e-2) {
 
