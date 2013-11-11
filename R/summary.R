@@ -17,28 +17,23 @@ summary.cmds <- function(res) {
 
   ans <- list()
   
-  ans$Error <- C.L(DL,XL,params) / params$N
-  ans$Distortion <- L.L(DL,XL,params) / params$N
-  ans$Penalty <- ans$Error-ans$Distortion
+  ans$Error <- a.n(C.L(DL,XL,params) / params$N)
+  ans$Distortion <- a.n(L.L(DL,XL,params) / params$N)
+  ans$Penalty <- a.n(ans$Error-ans$Distortion)
+
+  DL.X <- Dist.List(XL,params)
+
+  ans$Distortion_per_timestep <- aaply(1:params$T,1, function(i){
+    sum((DL.X[[i]]-DL[[i]])^2)/params$N})
   
   con$trace$rate <- aaply(seq(1,dim(con$trace)[1]), 1, function(i){
     if (i==1) Inf
     else (con$trace[i-1,]$C - con$trace[i,]$C)
   })
 
-  ## i <- con$trace$iter[which(con$trace$rate < 10^(-6))[1]]
+  sub <- subset(con$trace, rate < 1e-6)
+  
+  ans$Convergence <- cat("The algorithm converged after", sub$iter[1], "iterations.\n")
 
-  ## if ((con$delta >= 0) & con$delta < con$eps) {
-  ##   cat("The algorithm converged after ", i, "iterations. (delta = ", con$delta,")\n")
-  ## } else if (con$delta < 0 & abs(con$delta) < 1e-3) {
-  ##   cat("The algorithm converged with small increase. (delta = ", con$delta,", relative difference = ",con$rel.diff,")\n")
-  ## } else {
-  ##   cat("The algorithm did not converge. (delta = ", con$delta, ", relative difference = ", con$rel.diff,")\n")
-  ## }
-               
   ans
-  
-
-  
-  
 }
