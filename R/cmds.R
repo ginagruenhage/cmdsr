@@ -9,14 +9,15 @@
 #' \code{cmds} provides several MDS variants via the parameter \code{W}. \code{W} can be set to
 #' \itemize{
 #' \item \code{NULL} The algorithm uses an unweighted MDS cost function.
-#' \item \code{kamada-kawai} The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}.
+#' \item \code{kamada-kawai} The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}, yielding a Kamada-Kawai layout.
+#' \item \code{sammon} The weights are set to \eqn{w_{ij} = 1/(d_{ij})}, constituing the so called Sammon's Mapping.
 #' \item A list of custom weight matrices.
 #' }
 #'
 #' @param DL A list of \code{T} distance matrices of the same size, where each list item holds the distance matrix of size \code{NxN} for one timestep, where \code{N} is the size of the underlying dataset. The distance matrices should be positive, symmetric and have zero diagonal.
 #' @param k An integer defining the embedding dimension. Defaults to one.
 #' @param l The regularization parameter. Should be a positive real number.
-#' @param W An optional list of weight matrices. Should be of the same size as \code{D}. It can be used to implement variants of MDS.
+#' @param W One of ("NULL","kamada-kawai" or "sammon") or an optional list of weight matrices. The custom weights must be of the same size as \code{D}. It can be used to implement variants of MDS.
 #' @param v verbose. If set to TRUE the function outputs information about the convergence during runtime.
 #' @param per periodic. If set to TRUE the penalty will be adjusted to enforce periodic embeddings.
 #' @param M An optional custom penalty matrix of size \code{TxT}.
@@ -74,6 +75,13 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     else if (W == "kamada-kawai") {
       WL <- llply(DL,function(d) { 
         W <- 1/(d*d);
+        diag(W) <- 0;
+        W
+      })
+    }
+    else if (W == "sammon") {
+      WL <- llply(DL,function(d) { 
+        W <- 1/(d);
         diag(W) <- 0;
         W
       })
