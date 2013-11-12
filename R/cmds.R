@@ -11,18 +11,20 @@
 #' \item \code{NULL} The algorithm uses an unweighted MDS cost function.
 #' \item \code{kamada-kawai} The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}, yielding a Kamada-Kawai layout.
 #' \item \code{sammon} The weights are set to \eqn{w_{ij} = 1/(d_{ij})}, constituing the so called Sammon's Mapping.
+#' \item \code{unfolding} This option codes multidimensional unfolding. In this variant, all within-group distances get zero weight. With this option one must give a grouping vector \code{group}.
 #' \item A list of custom weight matrices.
 #' }
 #'
 #' @param DL A list of \code{T} distance matrices of the same size, where each list item holds the distance matrix of size \code{NxN} for one timestep, where \code{N} is the size of the underlying dataset. The distance matrices should be positive, symmetric and have zero diagonal.
 #' @param k An integer defining the embedding dimension. Defaults to one.
 #' @param l The regularization parameter. Should be a positive real number.
-#' @param W One of ("NULL","kamada-kawai" or "sammon") or an optional list of weight matrices. The custom weights must be of the same size as \code{D}. It can be used to implement variants of MDS.
+#' @param W One of ("NULL", "kamada-kawai", "sammon" or "unfolding") or an optional list of weight matrices. The custom weights must be of the same size as \code{D}. It can be used to implement variants of MDS.
 #' @param v verbose. If set to TRUE the function outputs information about the convergence during runtime.
 #' @param per periodic. If set to TRUE the penalty will be adjusted to enforce periodic embeddings.
 #' @param M An optional custom penalty matrix of size \code{TxT}.
 #' @param init The intialization method. Defaults to \code{average}, meaning that the algorithm is initialized with constant curves based on the average distance matrix. An alternative method is \code{random}.
 #' @param eps The accepted deviation from the previous iteration for convergence checking.
+#' @param group A group index vector of length N. 
 #' @export
 #' @return res A list with the following elements:
 #'   \item{XL}{A list of Nxk matrices, whose rows contain the coordinates of the points for a given timestep.}
@@ -38,7 +40,7 @@
 #' res <- cmds(QuadCurves, l = 10)
 
 
-cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL", init = "average", eps = 1e-2) {
+cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL", init = "average", eps = 1e-2, group = "NULL") {
 
   ## input checks on D
   if (class(DL) != "list") stop("'D' is not a list.")
@@ -86,6 +88,16 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
         W
       })
     }
+    else if (W == "unfolding") {
+      WL <- llply(replicate(T,list(matrix(1,N,N))), function(W){
+        W <- aaply(1:N, 1, function(i) {
+          W[i, group ==group[i]] = 0;
+          W[i,]
+        })
+        diag(W) <- 0;
+        W
+      })
+    }
   } else {
     if (class(W) == "list" & length(W) == T) {
       tmp <- aaply(seq_len(T), 1, function(i) dim(DL[[i]]) == dim(W[[i]]))
@@ -94,7 +106,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       stop("W must be either 'classic', 'kamada-kawai' or a custom list of weights.")
     }
   }
-  
+  browser()
   ## check D for NA's and set the corresponding weights to zero
   WL <- alply(seq_len(T), 1, function(i) {
     if (any(is.na(DL[[i]]))) {

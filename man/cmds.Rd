@@ -3,7 +3,8 @@
 \title{cmds computes a smooth embedding in k dimensions}
 \usage{
   cmds(DL, k = 1, l = 0, W = "NULL", v = FALSE,
-    per = FALSE, M = "NULL", init = "average", eps = 0.01)
+    per = FALSE, M = "NULL", init = "average", eps = 0.01,
+    group = "NULL")
 }
 \arguments{
   \item{DL}{A list of \code{T} distance matrices of the
@@ -18,9 +19,10 @@
   \item{l}{The regularization parameter. Should be a
   positive real number.}
 
-  \item{W}{An optional list of weight matrices. Should be
-  of the same size as \code{D}. It can be used to implement
-  variants of MDS.}
+  \item{W}{One of ("NULL", "kamada-kawai", "sammon" or
+  "unfolding") or an optional list of weight matrices. The
+  custom weights must be of the same size as \code{D}. It
+  can be used to implement variants of MDS.}
 
   \item{v}{verbose. If set to TRUE the function outputs
   information about the convergence during runtime.}
@@ -38,6 +40,8 @@
 
   \item{eps}{The accepted deviation from the previous
   iteration for convergence checking.}
+
+  \item{group}{A group index vector of length N.}
 }
 \value{
   res A list with the following elements: \item{XL}{A list
@@ -65,12 +69,23 @@
   via the parameter \code{W}. \code{W} can be set to
   \itemize{ \item \code{NULL} The algorithm uses an
   unweighted MDS cost function. \item \code{kamada-kawai}
-  The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)}. \item
-  A list of custom weight matrices. }
+  The weights are set to \eqn{w_{ij} = 1/(d_{ij}^2)},
+  yielding a Kamada-Kawai layout. \item \code{sammon} The
+  weights are set to \eqn{w_{ij} = 1/(d_{ij})}, constituing
+  the so called Sammon's Mapping. \item \code{unfolding}
+  This option codes multidimensional unfolding. In this
+  variant, all within-group distances get zero weight. With
+  this option one must give a grouping vector \code{group}.
+  \item A list of custom weight matrices. }
 }
 \examples{
 res <- cmds(QuadCurves)
 res <- cmds(ExpandingTriangle, k = 2, v = TRUE)
 res <- cmds(QuadCurves, l = 10)
+}
+\references{
+  Gina Gruenhage & Simon Barthelme, Visualizing the effects
+  of a changing distance using continuous embeddings,
+  http://arxiv.org/abs/1311.1911
 }
 
