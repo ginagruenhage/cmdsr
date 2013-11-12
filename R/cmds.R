@@ -106,7 +106,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       stop("W must be either 'classic', 'kamada-kawai' or a custom list of weights.")
     }
   }
-  browser()
+  
   ## check D for NA's and set the corresponding weights to zero
   WL <- alply(seq_len(T), 1, function(i) {
     if (any(is.na(DL[[i]]))) {
