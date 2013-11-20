@@ -40,8 +40,8 @@ plot.cmds <- function(res, embedding = TRUE,  animation = FALSE, delay = .1, con
         lim <- max(laply(DL,max))
         XLC <- center.conf(XL)
         for (i in 1:T){
-          plot(0, 0, type="n", ylim = c(-lim, lim), xlim = c(-lim, lim), xlab = "Dimension 1", ylab = "Dimension 2")
           par(pty = "s")
+          plot(0, 0, type="n", ylim = c(-lim, lim), xlim = c(-lim, lim), xlab = "Dimension 1", ylab = "Dimension 2")          
           points(XLC[[i]][1,], XLC[[i]][2,], pch = 19)
         } 
       } else {

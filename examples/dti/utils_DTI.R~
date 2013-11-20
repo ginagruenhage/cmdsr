@@ -1,0 +1,128 @@
+
+load("./homo_sapiens_01.Rdata")
+load("./aggregated_data.Rdata")
+
+add <- function(x) Reduce("+", x)
+
+## helper function, output is dataframe with source.index and the according region, region index, hemisphere and lobe
+get.names <- function(dt)
+  {
+    
+    dt$nodes$hemi <- factor(str_detect(dt$nodes$dn_label,'_RH'),labels=c('LH','RH'))
+    nn <- dt$nodes[,c('index','dn_freesurfer_structname','hemi')]
+    
+    nn$region <- paste0(nn$hemi,"_",str_split_fixed(nn$dn_free," ",n=2)[,1])
+    
+    names(nn) <- c("source.index","source.struct","source.hemi","source.region")
+    
+    lobes <- read.csv("region_scale33.csv")
+    lobes$source.region <- paste0(lobes$hemisphere,"_",lobes$label)
+    lobes <- subset(lobes,select=c(source.region,lobe))
+    names(lobes) <- c("source.region","source.lobe")
+    
+    ## assign indeces to region names, 1:33 is LH, 34:66 is RH, names are alphabetical
+    regs <- data.frame(source.reg.ind = 1:66, source.region= sort(unique(nn$source.region)) )
+    regs <- merge(regs,lobes)
+    
+    ## add source.reg.ind and source.lobe to nn (common column is source.region)
+    nn <- merge(nn,regs)
+    nn
+  }
+
+## add names and indeces to dat.all$links
+get.region.names.indeces <- function(dt)
+  {
+    nn <- get.names(dt)
+    
+    ## add nn infos to dt$links (common column is source.index)
+    dt$links <- merge(dt$links,nn)
+
+    names(nn) <- c("target.region","target.index","target.struct","target.hemi","target.reg.ind","target.lobe")
+
+    ## add nn infos to dt$links (common column is target.index)
+    dt$links <- merge(dt$links,nn)
+    dt$links <- mutate(dt$links,intra.hemi= (target.hemi==source.hemi) )
+    
+    dt
+  }
+
+## this aggregates the block matrices A_ij with all connections from region i to region j.
+## the information is stored in the list field "links.agg" in the dataframe
+## note that the data for A1 and A2 is still seperate, you probably want to average those two first in whatever analysis you do!
+## usage: dat.all.agg <- llply(dat.all, aggregate.data)
+## it takes a few minutes, thus, the results are stored in "../DTI/aggregated_data.Rdata" and loaded at the top of this file
+aggregate.data <- function(dt){
+  dt <- get.region.names.indeces(dt)
+  A <- connectivity.matrix(dt)
+  nR <- length(unique(dt$links$source.region))    
+  ind.in.reg <- function(i) unique(subset(dt$links,source.reg.ind==i)$source.index)    
+  gr <- expand.grid(1:nR,1:nR)
+
+  dt$links.agg <- ddply(gr,.(Var1,Var2),function(d) { data.frame(de_strength= mean(A[ind.in.reg(d$Var1),ind.in.reg(d$Var2)])) } )
+  
+  names(dt$links.agg)[1:2] <- c("source.reg.ind","target.reg.ind")
+  nn <- get.names(dt)
+  
+  ## only regional information:
+  nn <- unique(subset(nn,select= -c(source.index,source.struct)))
+  
+  ## add nn infos to dt$links.agg (common column is source.reg.index)
+  dt$links.agg <- merge(dt$links.agg,nn)
+  
+  names(nn) <- c("target.region","target.hemi","target.reg.ind","target.lobe")
+  
+  ## add nn infos to dt$links.agg (common column is target.reg.index)
+  dt$links.agg <- merge(dt$links.agg,nn)
+  
+  ## compute log scale of connection strengths
+  dt$links.agg$log_strength <- log10(dt$links.agg$de_strength)
+  
+  ## add intra-hemi logical
+  dt$links.agg <- mutate(dt$links.agg, intra.hemi = (target.hemi==source.hemi))
+  
+  dt
+}
+
+## build regional connectivity matrix from aggregated data
+## use stat="log_strength" for log_10 logarithmic scaling of connection strengths
+connectivity.matrix.regs <- function(dt,stat="de_strength"){
+  nR <- length(unique(dt$links.agg$source.region))
+  A <- sparseMatrix(dt$links.agg$source.reg.ind,dt$links.agg$target.reg.ind,x=dt$links.agg[,stat],dims=c(nR,nR))
+  A
+}
+
+connectivity.matrix <- function(dt,stat="de_strength"){
+  nN <- nrow(dt$nodes)
+  A <- sparseMatrix(dt$links$source.index,dt$links$target.index,x=dt$links[,stat],dims=c(nN,nN))
+  A
+}
+
+graph.group <- function(G,gvec){  
+  if (class(gvec) == "factor"){
+    gvec <- a.n(gvec)
+  }
+  
+  A <- get.adjacency(G, type = "both", attr = "weight")
+  N <- length(unique(gvec))
+  gr <- a.m(expand.grid(1:N, 1:N))
+
+  B <- aaply(gr, 1, function(p) mean(A[gvec == p[1], gvec == p[2]], na.rm = TRUE))
+
+  B <- matrix(B,N,N)
+  
+  graph.adjacency(B, weighted = TRUE)
+}
+
+graph.average <- function(GL){
+  AL <- llply(GL, get.adjacency, type = "both", attr = "weight")
+  A <- add(AL) / length(AL)
+  graph.adjacency(A, weighted = TRUE)
+}
+  
+average.subjectA <- function(L)
+  {
+    B <- list()
+    B$A <- add(L[c(1,2)])/2
+    B <- c(B,L[c(3,4,5,6)])
+    B
+  }
