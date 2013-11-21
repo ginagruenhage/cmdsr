@@ -82,10 +82,8 @@ plot.cmds(cmds(c(DL1, DL3), k = 1, l = 0), shepard = TRUE)
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-51.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-52.png) 
 
 ```r
-plot.cmds(cmds(c(DL2, DL3), k = 1, l = 0, v = T), shepard = TRUE)
+res <- cmds(c(DL2, DL3), k = 1, l = 0, v = T)
 ```
-
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-53.png) 
 
 ```
 ## Initialization: Total cost C:  278.3 
@@ -107,10 +105,55 @@ plot.cmds(cmds(c(DL2, DL3), k = 1, l = 0, v = T), shepard = TRUE)
 ## The algorithm converged. (delta =  0 )
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-54.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-55.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-56.png) 
+```r
+plot.cmds(res, shepard = TRUE)
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-53.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-54.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-55.png) ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-56.png) 
+
+To check wether this result is a local minimum of the cost function, I wrote three auxiliary functions:
+
+```r
+# transform the embedding list to a numeric vector
+XL2num <- function(XL) {
+    a.n(laply(XL, function(x) as.numeric(x)))
+}
+
+# wrapper for C.L (which computes the cost in the cmds algorithm), that
+# takes a numeric vector as first argument
+Cost <- function(x, DL, params) {
+    XL <- x2list(x, params)
+    C.L(DL, XL, params)
+}
+
+# calculates the numerical gradient and checks whether it's equal to zero
+# with numerical tolerance
+check.local.minimum <- function(res) {
+    x <- XL2num(res$XL)
+    n <- length(x)
+    g <- grad(Cost, x, DL = res$DL, params = res$params)
+    
+    if (all.equal(rep(0, n), g)) {
+        cat("The result is a local minimum of the cost function.\n")
+    } else {
+        cat("The automatic test for local minimum failed. \n You are now in a browser to check the actual value of the numerical gradient, g.\n")
+        browser()
+    }
+}
+```
+
+The weird result is really a local minimum:
+
+```r
+check.local.minimum(res)
+```
+
+```
+## The result is a local minimum of the cost function.
+```
 
 
-Actually, it seems to depend on the values in the random vector wether it works or not, for other random vectors I didn't get this effect. For example:
+Iit seems to depend on the values in the random vector wether it works or not, for other random vectors I didn't get this effect. For example:
 
 ```r
 set.seed(20)
@@ -125,18 +168,18 @@ plot.cmds(cmds(c(DL1, DL3), k = 1, l = 0), shepard = TRUE)
 ## The algorithm converged. (delta =  0 )
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-61.png) ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-62.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-81.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-82.png) 
 
 ```r
 plot.cmds(cmds(c(DL2, DL3), k = 1, l = 0), shepard = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-63.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-83.png) 
 
 ```
 ## Total cost C:  8.135e-31 
 ## The algorithm converged. (delta =  0 )
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-64.png) ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-65.png) ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-66.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-84.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-85.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-86.png) 
 

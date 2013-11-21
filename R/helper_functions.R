@@ -175,13 +175,36 @@ transform.res <- function(res){
   list(D = Dist, X = X, D.X = D.X)
 }
 
-## arrays.from.lists <- function(DL,XL,params){
-##   Dist <- laply(DL, function(D) D)
-##   X <- laply(XL, function(X) X, .drop = FALSE)
+x2list <- function(x,params){
+  T <- params$T
+  D <- params$D
+  N <- params$N
+  X <- array(x,c(T,D,N))
+  XL <- alply(X, 1, function(x) matrix(x,D,N))
+  XL
+}
+
+XL2num <- function(XL){
+  a.n(laply(XL,function(x) as.numeric(x)))
+}
+
+Cost <- function(x,DL,params){
+  XL <- x2list(x,params)
+  C.L(DL, XL, params)
+}
+
+check.local.minimum <- function(res){
+  x <- XL2num(res$XL)
+  n <- length(x)
+  g <- grad(Cost, x, DL = res$DL, params = res$params)
   
-##   D.X <- Dist.matrix(X, params)
-##   list(D = Dist, X = X, D.X = D.X)
-## }
+  if (all.equal(rep(0,n),g)){
+    cat("The result is a local minimum of the cost function.\n")
+  } else {
+    cat("The automatic test for local minimum failed. \n You are now in a browser to check the actual value of the numerical gradient, g.\n")
+    browser()
+  }
+}
 
 Dist.List <- function(XL,params){
   X <- laply(XL, function(X) X, .drop = FALSE)  
