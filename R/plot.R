@@ -76,8 +76,8 @@ plot.cmds <- function(res, embedding = TRUE,  animation = FALSE, delay = .1, con
     lim <- max(laply(DL,max))
     
     for (i in seq(1,T)){
-      plot(0, 0, type="n", ylim = c(0,lim), xlim = c(0,lim), xlab = "Original Distances", ylab = "Embedding Distances")
       par(pty = "s")
+      plot(0, 0, type="n", ylim = c(0,lim), xlim = c(0,lim), xlab = "Original Distances", ylab = "Embedding Distances")      
       abline(0,1)
       points(a.n(DL[[i]]), a.n(DL.X[[i]]))
     }
