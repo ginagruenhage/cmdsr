@@ -17,14 +17,14 @@ summary.cmds <- function(res) {
 
   ans <- list()
   
-  ans$Error <- a.n(C.L(DL,XL,params) / params$N)
-  ans$Distortion <- a.n(L.L(DL,XL,params) / params$N)
+  ans$Error <- a.n(C.L(DL,XL,params) / params$sum.D)
+  ans$Distortion <- a.n(L.L(DL,XL,params) / params$sum.D)
   ans$Penalty <- a.n(ans$Error-ans$Distortion)
 
   DL.X <- Dist.List(XL,params)
 
   ans$Distortion_per_timestep <- aaply(1:params$T,1, function(i){
-    sum((DL.X[[i]]-DL[[i]])^2)/params$N})
+    sum((DL.X[[i]]-DL[[i]])^2) / sum(DL[[i]]^2) })
   
   con$trace$rate <- aaply(seq(1,dim(con$trace)[1]), 1, function(i){
     if (i==1) Inf

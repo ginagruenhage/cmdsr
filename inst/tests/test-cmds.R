@@ -4,7 +4,7 @@ test_that("verbose works", {
   a <- alply(replicate(5,c(0,1,1,1,0,1,1,1,0)), 2, matrix, nrow = 3, ncol = 3)
 
   expect_that(cmds(a,v=TRUE), prints_text("Iteration"))
-  expect_that(cmds(QuadCurves,k=1,l=3,v=T), prints_text("Init.+29988.48"))
+  expect_that(cmds(QuadCurves,k=1,l=3,v=T), prints_text("Init.+0.947017"))
 })
   
 test_that("quadratic example works", {  

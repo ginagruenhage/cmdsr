@@ -151,8 +151,10 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   
   ## set params
   max.iter = 50 ## number of outer loop iterations, multiple of 5
+  square <- function(a) a^2
+  sum.D <- sum(laply(DL, square))
   
-  params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M)
+  params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M, sum.D = sum.D)
   
   ## function to compute embedding
   do.cmds <- function(DL, XL, params, max.iter){
@@ -161,19 +163,19 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     
     for (i in seq(1,max.iter)) {
       if (i == 1) {
-        e <- C.L(DL, XL, params)/N
+        e <- C.L(DL, XL, params)/sum.D
         if (v == TRUE) cat("Initialization: Total cost C: ",e,"\n")
         con$trace[1,]$C <- e
       }      
       OuterLoop(DL, XL, params,1)
       if (i %in% c(seq(1,5),seq(10, max.iter, by=5))) {
-        e <- C.L(DL, XL, params)/N
+        e <- C.L(DL, XL, params)/sum.D
         if (v == TRUE) cat("Iteration: ", i, ", total cost C: ",e,"\n")
         con$trace[con$trace$iter == i,]$C <- e
       }
     }  
     OuterLoop(DL, XL, params,1)
-    e0 <- C.L(DL, XL, params)/N
+    e0 <- C.L(DL, XL, params)/sum.D
     cat("Total cost C: ",e0,"\n")
     con$trace[con$trace$iter == max.iter + 1,]$C <- e0
     list(DL = DL, XL = XL, params = params, con = con, e = e, e0 = e0)
