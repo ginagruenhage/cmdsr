@@ -196,6 +196,8 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       MeanD <- add(DL)/T
       MeanD[is.na(MeanD)] <- 0
       X <- as.matrix(smacofSym(MeanD,ndim=k)$conf,N,k)
+      norm.smacof <- sqrt(0.5 * sum(MeanD^2)) / sqrt(N * (N-1) / 2)
+      X <- norm.smacof * X
       X <- raply(T,X,.drop=FALSE)
       XL <- alply(X,1,function(x) t(x))
       attributes(XL) <- NULL
