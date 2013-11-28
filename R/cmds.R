@@ -91,7 +91,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     else if (W == "unfolding") {
       WL <- llply(replicate(T,list(matrix(1,N,N))), function(W){
         W <- aaply(1:N, 1, function(i) {
-          W[i, group ==group[i]] = 0;
+          W[i, group == group[i]] = 0;
           W[i,]
         })
         diag(W) <- 0;
@@ -129,32 +129,36 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
 
   ## check M
   if (T >=3 ){
-  if (class(M) == "character") {
-    if (M == "NULL") {
-      M <- Penalty.M(T, periodic = per)
-    } 
+    if (class(M) == "character") {
+      if (M == "NULL") {
+        M <- Penalty.M(T, periodic = per)
+      } 
+    } else {
+      if (all(dim(as.matrix(M)) != c(T,T))) stop("The custom penalty matrix must be of size TxT.")
+    }
   } else {
-    if (all(dim(as.matrix(M)) != c(T,T))) stop("The custom penalty matrix must be of size TxT.")
+    M = 1
   }
-} else { M = 1 }
+
+  
   ## check init
   if (class(init) == "list") {
     tmp <- aaply(seq_len(T), 1, function(i) dim(init[[i]]) == c(N,k))
     if(!all(tmp)) stop("Your custom initialization should be a list with matrices of size Nxk.")
   } else {
     if (class(init) == "character") {
-      if (init != "average" & init != "random") stop("'init' must be 'average' or 'random' or a custom list.")
+      if (init != "average" & init != "random" & init != "smacof") stop("'init' must be 'average' or 'random' or a custom list.")
       if (init == "random" & l == 0) warning("We recommend to use at least a little bit of smoothing with random initialization.")
     } else
-      stop("'init' must be 'average' or 'random' or a custom list.")
+      stop("'init' must be 'average', 'random', 'smacof' or a custom list.")
   }
   
   ## set params
   max.iter = 50 ## number of outer loop iterations, multiple of 5
-  square <- function(a) a^2
-  sum.D <- sum(laply(DL, square))
-  
-  params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M, sum.D = sum.D)
+  norm.C <- sum(aaply(1:T, 1, function(t){
+    WL[[t]] * DL[[t]]^2 }))
+    
+  params <- list(N = N, D = k , T = T, l = l, weighted = TRUE, WL = WL, Regress = solve(l*M + eye(T)), eps = eps, M = M, M.D = diag(k) %x% M , M.DN = diag(k*N) %x% M, norm.C = norm.C)
   
   ## function to compute embedding
   do.cmds <- function(DL, XL, params, max.iter){
@@ -163,19 +167,19 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
     
     for (i in seq(1,max.iter)) {
       if (i == 1) {
-        e <- C.L(DL, XL, params)/sum.D
+        e <- C.L(DL, XL, params)/norm.C
         if (v == TRUE) cat("Initialization: Total cost C: ",e,"\n")
         con$trace[1,]$C <- e
       }      
       OuterLoop(DL, XL, params,1)
       if (i %in% c(seq(1,5),seq(10, max.iter, by=5))) {
-        e <- C.L(DL, XL, params)/sum.D
+        e <- C.L(DL, XL, params)/norm.C
         if (v == TRUE) cat("Iteration: ", i, ", total cost C: ",e,"\n")
         con$trace[con$trace$iter == i,]$C <- e
       }
     }  
     OuterLoop(DL, XL, params,1)
-    e0 <- C.L(DL, XL, params)/sum.D
+    e0 <- C.L(DL, XL, params)/norm.C
     cat("Total cost C: ",e0,"\n")
     con$trace[con$trace$iter == max.iter + 1,]$C <- e0
     list(DL = DL, XL = XL, params = params, con = con, e = e, e0 = e0)
@@ -186,11 +190,10 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
 
   if (class(init) == "character"){
     if (init == "random"){
-      ## initialization is done later      
+      ## initialization is done later, because here, the algorithm runs several time, with a new initialization in each trial
+      
     } else if (init == "average") {
       MeanD <- add(DL)/T
-      w <- matrix(1,N,N)
-      w[is.na(MeanD)] <- 0
       MeanD[is.na(MeanD)] <- 0
       X <- as.matrix(smacofSym(MeanD,ndim=k)$conf,N,k)
       X <- raply(T,X,.drop=FALSE)
@@ -198,15 +201,20 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
       attributes(XL) <- NULL
       ## store a hard copy of the initial configuration
       XL.init <- llply(XL,function(X) X+0)
-
-      #plot.cmds(list(DL = DL,XL = XL, params = params))
+      
+    } else if (init == "smacof"){
+      XL <- alply(1:T, 1, function(t){
+        x <- t(as.matrix(smacofSym(DL[[t]],ndim=k)$conf,N,k));
+        norm.smacof <- sqrt(0.5 * sum(DL[[t]]^2)) / sqrt(N * (N-1) / 2);
+        x <- norm.smacof * x;
+        x
+      })
+      XL.init <- llply(XL,function(X) X+0)
     }
   } else {
     XL <- init
     ## store a hard copy of the initial configuration
     XL.init <- llply(XL,function(X) X+0)
-    
-    plot.cmds(list(DL = DL,XL = XL, params = params))
   }
   
   ## compute embedding
