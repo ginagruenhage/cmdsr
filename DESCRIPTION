@@ -17,11 +17,3 @@ Depends:
     animation,
     googleVis
 LinkingTo: Rcpp, RcppArmadillo
-Collate:
-    'RcppExports.R'
-    'cmds.R'
-    'helper_functions.R'
-    'plot.R'
-    'summary.R'
-    'cmdsr.r'
-    'googleVisPlot.R'

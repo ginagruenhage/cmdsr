@@ -1,6 +1,6 @@
 
 ```{r}
-opts_chunk$set(tidy = TRUE, cache = TRUE) 
+opts_chunk$set(tidy = TRUE, cache = FALSE) 
 ```
 # Analysis on regional aggregation of DTI data
 

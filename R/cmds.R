@@ -22,7 +22,7 @@
 #' @param v verbose. If set to TRUE the function outputs information about the convergence during runtime.
 #' @param per periodic. If set to TRUE the penalty will be adjusted to enforce periodic embeddings.
 #' @param M An optional custom penalty matrix of size \code{TxT}.
-#' @param init The intialization method. Defaults to \code{average}, meaning that the algorithm is initialized with constant curves based on the average distance matrix. An alternative method is \code{random}.
+#' @param init The intialization method. Defaults to \code{average}, meaning that the algorithm is initialized with constant curves based on the average distance matrix. Alternative methods are \code{random} and \code{smacof}.
 #' @param eps The accepted deviation from the previous iteration for convergence checking.
 #' @param group A group index vector of length N. 
 #' @export

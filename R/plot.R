@@ -22,6 +22,7 @@ plot.cmds <- function(res, embedding = TRUE,  animation = FALSE, delay = .1, con
   DL.X <- Dist.List(XL,params)
   D <- params$D
   T <- params$T
+  N <- params$N
   
   if (embedding){
     if (D == 1) {
@@ -43,7 +44,9 @@ plot.cmds <- function(res, embedding = TRUE,  animation = FALSE, delay = .1, con
           par(pty = "s")
           plot(0, 0, type="n", ylim = c(-lim, lim), xlim = c(-lim, lim), xlab = "Dimension 1", ylab = "Dimension 2")          
           points(XLC[[i]][1,], XLC[[i]][2,], pch = 19)
-        } 
+        }
+        plot.new()
+        par(mfrow=c(1,1))
       } else {
         show.anim <- function(delay=1)
           {
@@ -79,7 +82,7 @@ plot.cmds <- function(res, embedding = TRUE,  animation = FALSE, delay = .1, con
       par(pty = "s")
       plot(0, 0, type="n", ylim = c(0,lim), xlim = c(0,lim), xlab = "Original Distances", ylab = "Embedding Distances")      
       abline(0,1)
-      points(a.n(DL[[i]]), a.n(DL.X[[i]]))
+      points(a.n(DL[[i]]), a.n(DL.X[[i]]), pch = 19, col = rgb(0,0,0,2/N))
     }
   }
     

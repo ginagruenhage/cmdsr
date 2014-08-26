@@ -23,7 +23,6 @@ summary.cmds <- function(res) {
   ans$Penalty <- a.n(ans$Error-ans$Distortion)
 
   DL.X <- Dist.List(XL,params)
-
   ans$Distortion_per_timestep <- aaply(1:params$T,1, function(i){
     sum((DL.X[[i]]-DL[[i]])^2) / sum(WL[[i]]*DL[[i]]^2) })
   

@@ -20,7 +20,6 @@ library(plyr)
 library(stringr)
 source("utils_DTI.R")
 load("homo_sapiens_01.Rdata")  #Same thing
-nROI <- length(unique(dat.all[[1]]$links$source.index))
 ```
 
 Structure of the data: dat.all is a list with 6 element, one per subject. Each of these elements is in turn a list containing 3 elements, "nodes", "link" and "info". 
@@ -110,7 +109,7 @@ regions[1:10, ]
 ## 2391         LH_isthmuscingulate             10          LH     frontal
 ```
 
-We define a grouping vector of length 994 (the number of ROIs), that assigns a regional index to each ROI:
+We define a grouping vector of length 998 (the number of ROIs), that assigns a regional index to each ROI:
 
 ```r
 sub1 <- unique(subset(dat.all[[1]]$links, select = c("source.index", "source.reg.ind")))
@@ -318,8 +317,8 @@ res <- cmds(DL, k = 2, l = 0.5, W = "kamada-kawai")
 ```
 
 ```
-## Total cost C:  53.15 
-## The algorithm converged. (delta =  0.007176 )
+## Total cost C:  2.992 
+## The algorithm converged with small increase. (delta =  -0.0001141 , relative difference =  -3.813e-05 )
 ```
 
 
