@@ -223,7 +223,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   if (class(init) == "character"){
     if (init == "random"){
       RL <- list()
-      for (t in seq(1,40)){
+      for (t in seq(1,20)){
         XL <- alply(seq_len(T), 1, function(i) x <- matrix(rnorm(N*k,0,max(DL[[i]])),k,N))
         XL.init <- llply(XL,function(X) X+0)
         RL[[t]] <- do.cmds(DL, XL.init, params, max.iter)
