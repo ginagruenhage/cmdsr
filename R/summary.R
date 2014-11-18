@@ -31,9 +31,16 @@ summary.cmds <- function(res) {
     else (con$trace[i-1,]$C - con$trace[i,]$C)
   })
 
-  sub <- subset(con$trace, rate < 1e-6)
   
-  ans$Convergence <- cat("The algorithm converged after", sub$iter[1], "iterations.\n")
+  sub <- subset(con$trace, rate < 1e-6)
+
+  if (dim(sub)[1] > 0) {
+    ans$Convergence <- cat("The algorithm converged after", sub$iter[1], "iterations.\n")
+  } else {
+    ans$Convergence <- cat("The cost reduction in the last five iterations was", con$trace$rate[16],".\n" )
+  }
+
+  ans$PenaltiesPerCurve <- penalty.per.curve.list(DL,XL,params)
 
   ans
 }

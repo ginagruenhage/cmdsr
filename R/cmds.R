@@ -47,7 +47,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
 
   llply(DL, function(d) {
     if (!is.square(d)) stop("All elements of 'D' must be square matrices.")
-    if (!isSymmetric(d)) stop("All elements of 'D' must be symmetric matrices.")
+    if (!is.symmetric(d)) stop("All elements of 'D' must be symmetric matrices.")
     if (any(diag(d) != 0)) stop("All elements of 'D' must have zero diagonal.")
   })
 

@@ -10,6 +10,18 @@ eye <- function(n,sparse=F)
       }
   }
 
+is.symmetric <- function(A)
+  {
+    if (nrow(A) == ncol(A))
+      {
+        all(A==t(A))
+      }
+    else
+      {
+        FALSE
+      }
+  }
+
 a.n <- as.numeric
 
 is.square <- function(m) dim(m)[1] == dim(m)[2]
@@ -42,11 +54,16 @@ penalty.per.curve.list <- function(DL,XL,params)
     Dist <- laply(DL, function(D) D)
     X <- laply(XL, function(X) X, .drop = FALSE)
     
-    pen <- function(Dist,x,params) params$l* O(Dist, x , params)
+    pen <- function(Dist,x,params) O(Dist, x , params)
     
     penalties <- aaply( X , 3 , function(x) pen(Dist,array(x,c(params$T,params$D,1)),params))
+
     
-    penalties <- data.frame(index=1:dim(X)[3],penalties=penalties)
+    if (length(rownames(DL[[1]]))>0 ){
+      penalties <- data.frame(id = rownames(DL[[1]]),penalties=penalties)
+    } else {
+      penalties <- data.frame(id = 1:dim(X)[3],penalties=penalties)
+    }
     penalties
   }
 
