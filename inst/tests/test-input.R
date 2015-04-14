@@ -14,7 +14,7 @@ test_that("incorrect D input raises errors", {
   expect_that(cmds(a),throws_error("All elements of 'D' must have zero diagonal."))
 
   a <- llply(rep(0, 3), matrix, nrow = 2, ncol = 2)
-  expect_that(cmds(a),gives_warning("Some rows of 'D' are equal to zero or NA."))
+  expect_that(cmds(a),throws_error("All rows of 'D' are equal to zero or NA."))
   
   a <- alply(replicate(3, c(0,NA,NA,0)), 2, matrix, nrow = 2, ncol = 2)
   expect_that(cmds(a),gives_warning("Some rows of 'D' are equal to zero or NA."))

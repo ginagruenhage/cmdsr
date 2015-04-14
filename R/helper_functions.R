@@ -14,13 +14,18 @@ is.symmetric <- function(A)
   {
     if (nrow(A) == ncol(A))
       {
+        if (any(is.na(A))){
+          A[is.na(A)] <- 0
+        }
         all(A==t(A))
+        
       }
     else
       {
         FALSE
       }
-  }
+ }
+
 
 a.n <- as.numeric
 

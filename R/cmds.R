@@ -57,6 +57,7 @@ cmds <- function(DL, k = 1, l = 0, W = "NULL", v = FALSE, per = FALSE, M = "NULL
   llply(DL, function(d) {
     tmp <- aaply(d, 1, function(v) (all(v == 0) | sum(is.na(v))==(N-1) ) )
     tmp[is.na(tmp)] <- FALSE
+    if (all(tmp)) stop("All rows of 'D' are equal to zero or NA.")
     if (any(tmp)) warning("Some rows of 'D' are equal to zero or NA.")
     if (any(is.infinite(d))) stop("'D' contains infinite values.")
     if (any(d[!is.na(d)] < 0)) stop("'D' contains negative values.")
